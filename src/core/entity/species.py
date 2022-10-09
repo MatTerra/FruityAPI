@@ -16,10 +16,10 @@ class Species(Entity):
     approved: bool = field(default=False)
     approved_by: str = field(default="")
     scientific_name: str = field(default="")
-    popular_names: List[str] = field(default_factory=list)
+    popular_names: list = field(default_factory=list)
     description: str = field(default="")
-    links: List[str] = field(default_factory=list)
-    pictures_url: List[str] = field(default_factory=list)
+    links: list = field(default_factory=list)
+    pictures_url: list = field(default_factory=list)
     season_start_month: int = field(default=None,
                                     metadata={"validation": is_valid_month})
     season_end_month: int = field(default=None,
