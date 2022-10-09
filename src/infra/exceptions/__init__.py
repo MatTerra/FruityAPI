@@ -14,7 +14,7 @@ def treat_exceptions(func):
         except NovaAPIException as e:
             raise HTTPException(status_code=e.status_code,
                                 detail=e.message,
-                                headers={"X-Error": e.error_code})
+                                headers={"X-Error": str(e.error_code)})
 
     return inner
 

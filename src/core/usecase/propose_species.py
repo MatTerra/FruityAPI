@@ -1,12 +1,22 @@
 from typing import Optional
 
 from dependency_injector.wiring import Provide, inject
-from pydantic import validator
+from pydantic import BaseModel, validator
 
 from core.entity.species import Species
 from core.repository.species_repository import SpeciesRepository
 from core.usecase import UseCase, UseCaseInput
 from infra.repository import RepositoryContainer
+
+
+class ProposeSpeciesRequestInput(BaseModel):
+    scientific_name: Optional[str] = ""
+    popular_names: Optional[list[str]]
+    description: Optional[str] = ""
+    links: Optional[list[str]]
+    pictures_url: Optional[list[str]]
+    season_start_month: Optional[int]
+    season_end_month: Optional[int]
 
 
 class ProposeSpeciesInput(UseCaseInput):
@@ -21,12 +31,12 @@ class ProposeSpeciesInput(UseCaseInput):
 
     @validator('season_start_month')
     def check_season_start(cls, v):
-        assert 0 < v < 12
+        assert 0 < v < 13 if v is not None else True
         return v
 
     @validator('season_end_month')
     def check_season_end(cls, v):
-        assert 0 < v < 12
+        assert 0 < v < 13 if v is not None else True
         return v
 
 
