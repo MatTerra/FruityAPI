@@ -25,7 +25,7 @@ class Species(Entity):
     season_end_month: int = field(default=None,
                                   metadata={"validation": is_valid_month})
 
-    def approve(self, approver: str):
+    def approve(self, approver: str) -> None:
         """
         Sets the species as approved and registers the approver.
 
@@ -37,3 +37,8 @@ class Species(Entity):
                 debug=f"Species approved by {self.approved_by}")
         self.approved = True
         self.approved_by = approver
+
+    def is_in_season_in_month(self, month: int) -> bool:
+        if self.season_start_month and self.season_end_month:
+            return self.season_start_month <= month <= self.season_end_month
+        return False
