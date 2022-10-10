@@ -43,21 +43,6 @@ class TestFindSpecies:
             results = await find_species.execute(FindSpeciesInput())
             assert results == (2, [cagaita, cajuzinho])
 
-    async def test_find_species_with_none_filter_should_return(
-            self,
-            cagaita,
-            cajuzinho,
-            not_approved
-    ):
-        repository = SpeciesMemoryRepository()
-        repository.create(cagaita)
-        repository.create(cajuzinho)
-        repository.create(not_approved)
-        with container.species.override(repository):
-            find_species = FindSpecies()
-            results = await find_species.execute(FindSpeciesInput(None, None))
-            assert results == (2, [cagaita, cajuzinho])
-
     async def test_find_species_with_scientific_name_should_return(
             self,
             cagaita,

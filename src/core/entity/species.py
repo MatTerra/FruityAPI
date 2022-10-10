@@ -7,7 +7,7 @@ from infra.exceptions import SpeciesAlreadyApprovedException
 
 
 def is_valid_month(month: int):
-    return 0 < month < 12 if month is not None else True
+    return 0 < month < 13 if month is not None else True
 
 
 @dataclass

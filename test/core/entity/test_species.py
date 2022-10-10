@@ -1,5 +1,5 @@
 from nova_api.exceptions import InvalidAttributeException
-from pytest import raises
+from pytest import raises, mark
 
 from core.entity.species import Species
 from infra.exceptions import SpeciesAlreadyApprovedException
@@ -22,6 +22,10 @@ class TestSpecies:
             species.season_start_month = 13
         with raises(InvalidAttributeException):
             species.season_end_month = 0
+
+    @mark.parametrize("month", [*range(1,13), None])
+    def test_should_accept_valid_month(self, month):
+        Species(season_start_month=month, season_end_month=month)
 
     def test_approve_should_set_approved(self):
         species = Species()

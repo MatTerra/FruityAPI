@@ -1,7 +1,32 @@
+from pydantic import ValidationError
+from pytest import mark, raises
+
 from core.usecase.propose_species import ProposeSpecies, ProposeSpeciesInput
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 
 from test import container
+
+
+class TestProposeSpeciesInput:
+    def test_shouldnt_accept_empty_creator(self):
+        with raises(ValidationError):
+            _input = ProposeSpeciesInput()
+
+    @mark.parametrize("month", [*range(1, 13), None])
+    def test_should_accept_valid_month(self, month):
+        _input = ProposeSpeciesInput(creator="test",
+                                     season_start_month=month,
+                                     season_end_month=month)
+
+    @mark.parametrize("month", [0, 13])
+    def test_shouldnt_accept_invalid_month(self, month):
+        with raises(ValidationError):
+            _input = ProposeSpeciesInput(creator="test",
+                                         season_start_month=month,
+                                         season_end_month=month)
+
+    def test_should_accept_non_empty_creator(self):
+        _input = ProposeSpeciesInput(creator="test")
 
 
 class TestProposeSpecies:
