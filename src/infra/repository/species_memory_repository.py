@@ -1,6 +1,6 @@
 import logging
+import datetime
 from copy import deepcopy
-from datetime import datetime
 from typing import Optional
 
 from nova_api.exceptions import DuplicateEntityException, \
@@ -66,7 +66,9 @@ class SpeciesMemoryRepository(SpeciesRepository):
         results = []
         for _id, species in self.database.items():
             for _property, value in filters.items():
-                in_season = species.is_in_season_in_month(datetime.now().month)
+                in_season = species.is_in_season_in_month(
+                    datetime.datetime.now().month
+                )
                 if _property == "in_season" and in_season is not value:
                     break
                 if _property == "popular_name" and \
@@ -79,7 +81,7 @@ class SpeciesMemoryRepository(SpeciesRepository):
             else:
                 results.append(species)
         results = results[offset:length]
-        return len(results), results
+        return 0 if len(results) == 0 else len(self.database), results
 
     def findById(self, _id: str) -> Optional[Species]:
         return self.database.get(_id)

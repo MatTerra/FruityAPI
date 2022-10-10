@@ -40,10 +40,13 @@ class Species(Entity):
 
     def is_in_season_in_month(self, month: int) -> bool:
         if self.season_start_month and self.season_end_month:
-
-            return self.season_start_month <= month <= self.season_end_month \
-                if self.season_start_month <= self.season_end_month \
-                else self.season_start_month <= month \
-                     or month <= self.season_end_month
-
+            month_is_in_between_start_and_end = self.season_start_month \
+                                                <= month \
+                                                <= self.season_end_month
+            start_is_before_end = self.season_start_month <= \
+                                  self.season_end_month
+            return ((start_is_before_end and month_is_in_between_start_and_end)
+                    or (not start_is_before_end
+                        and (self.season_start_month <= month
+                             or month <= self.season_end_month)))
         return False

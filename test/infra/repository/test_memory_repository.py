@@ -79,7 +79,7 @@ class TestMemoryRepository:
                                        species2.id_: species2,
                                        species3.id_: species3}
         assert repository.find(filters={"creator": "Tester"}) \
-               == (2, [species, species2])
+               == (3, [species, species2])
 
     def test_find_species_should_return_length_matches(self, repository):
         species = Species(creator="Tester")
@@ -89,7 +89,7 @@ class TestMemoryRepository:
         assert repository.database == {species.id_: species,
                                        species2.id_: species2}
         assert repository.find(length=1, filters={"creator": "Tester"}) \
-               == (1, [species])
+               == (2, [species])
 
     def test_find_species_should_skip_offset_matches(self, repository):
         species = Species(creator="Tester")
@@ -99,7 +99,7 @@ class TestMemoryRepository:
         assert repository.database == {species.id_: species,
                                        species2.id_: species2}
         assert repository.find(offset=1, filters={"creator": "Tester"}) \
-               == (1, [species2])
+               == (2, [species2])
 
     def test_delete_should_remove_from_database(self, repository):
         species = Species(creator="Tester")
