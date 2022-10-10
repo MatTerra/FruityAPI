@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
@@ -30,17 +30,21 @@ def find_species(popular_name: str | None = None,
 def propose_species(values: ProposeSpeciesRequestInput,
                     user=Depends(get_user)):
     propose_species_handler = ProposeSpecies()
-    input = ProposeSpeciesInput(**values.__dict__, creator=user.get("sub"))
-    return propose_species_handler.execute(input)
+    _input = ProposeSpeciesInput(**values.__dict__, creator=user.get("sub"))
+    return propose_species_handler.execute(_input)
 
 
 @species_v1_router.post("/{species_id}/approve")
 @treat_exceptions
-def approve_species(species_id: str):
+def approve_species(species_id: str,
+                    user=Depends(get_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403,
+                            detail="Only admins can approve species")
     approve_species_handler = ApproveSpecies()
     return approve_species_handler.execute(
         ApproveSpeciesInput(species=species_id,
-                            approver="test")
+                            approver=user.get("sub"))
     )
 
 
