@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
+from core.usecase.get_species import GetSpecies, GetSpeciesInput
 from core.usecase.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
 from infra.authentication import get_user
@@ -26,17 +27,27 @@ def find_species(popular_name: str | None = None,
 
 @species_v1_router.post("/")
 @treat_exceptions
-def find_species(values: ProposeSpeciesRequestInput, user=Depends(get_user)):
-    find_species_handler = ProposeSpecies()
+def propose_species(values: ProposeSpeciesRequestInput,
+                    user=Depends(get_user)):
+    propose_species_handler = ProposeSpecies()
     input = ProposeSpeciesInput(**values.__dict__, creator=user.get("sub"))
-    return find_species_handler.execute(input)
+    return propose_species_handler.execute(input)
 
 
 @species_v1_router.post("/{species_id}/approve")
 @treat_exceptions
-def find_species(species_id: str):
-    find_species_handler = ApproveSpecies()
-    return find_species_handler.execute(
+def approve_species(species_id: str):
+    approve_species_handler = ApproveSpecies()
+    return approve_species_handler.execute(
         ApproveSpeciesInput(species=species_id,
                             approver="test")
+    )
+
+
+@species_v1_router.get("/{species_id}")
+@treat_exceptions
+def find_species(species_id: str):
+    get_species_handler = GetSpecies()
+    return get_species_handler.execute(
+        GetSpeciesInput(species=species_id)
     )
