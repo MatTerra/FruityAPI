@@ -2,9 +2,9 @@ from pytest import fixture
 
 from core.entity.species import Species
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
-from infra.repository import RepositoryContainer
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from test import container
+
 
 class TestFindSpecies:
     @fixture

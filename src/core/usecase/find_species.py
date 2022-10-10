@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
 from dependency_injector.wiring import Provide
@@ -11,6 +10,7 @@ from infra.repository import RepositoryContainer
 class FindSpeciesInput(UseCaseInput):
     scientific_name: Optional[str]
     popular_name: Optional[str]
+    in_season: Optional[bool]
 
 
 class FindSpecies(UseCase):
@@ -22,8 +22,8 @@ class FindSpecies(UseCase):
         self.repository = repository
 
     async def execute(self, _input: UseCaseInput):
-        input_filters = {filter: value
-                         for filter, value in _input.__dict__.items()
+        input_filters = {_filter: value
+                         for _filter, value in _input.__dict__.items()
                          if value is not None}
         return self.repository.find(filters={"approved": True,
                                              **input_filters})

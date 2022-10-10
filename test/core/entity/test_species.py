@@ -71,3 +71,16 @@ class TestSpecies:
     ):
         species = Species(season_start_month=month, season_end_month=month)
         assert species.is_in_season_in_month(month) is True
+
+    def test_is_in_season_should_wrap(self):
+        species = Species(season_start_month=11, season_end_month=2)
+        assert species.is_in_season_in_month(12) is True
+        assert species.is_in_season_in_month(1) is True
+
+    def test_is_in_season_should_return_false_if_out_of_season(self):
+        species = Species(season_start_month=11, season_end_month=2)
+        assert species.is_in_season_in_month(10) is False
+        assert species.is_in_season_in_month(3) is False
+        species = Species(season_start_month=6, season_end_month=7)
+        assert species.is_in_season_in_month(5) is False
+        assert species.is_in_season_in_month(8) is False
