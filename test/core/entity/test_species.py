@@ -84,3 +84,6 @@ class TestSpecies:
         species = Species(season_start_month=6, season_end_month=7)
         assert species.is_in_season_in_month(5) is False
         assert species.is_in_season_in_month(8) is False
+        species = Species(season_start_month=9, season_end_month=9)
+        assert species.is_in_season_in_month(10) is False
+        assert species.is_in_season_in_month(8) is False

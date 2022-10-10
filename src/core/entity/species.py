@@ -42,7 +42,7 @@ class Species(Entity):
         if self.season_start_month and self.season_end_month:
 
             return self.season_start_month <= month <= self.season_end_month \
-                if self.season_start_month < self.season_end_month \
+                if self.season_start_month <= self.season_end_month \
                 else self.season_start_month <= month \
                      or month <= self.season_end_month
 

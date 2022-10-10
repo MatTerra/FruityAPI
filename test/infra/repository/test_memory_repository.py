@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from nova_api.exceptions import DuplicateEntityException, \
     EntityNotFoundException, NotEntityException
@@ -152,4 +154,40 @@ class TestMemoryRepository:
         assert repository.find(filters={"popular_name": "cagaita"}) \
                == (1, [species])
         assert repository.find(filters={"popular_name": "cagait"}) \
+               == (0, [])
+
+    def test_find_species_should_return_if_in_season(self,
+                                                     repository):
+        species = Species(season_start_month=datetime.now().month,
+                          season_end_month=datetime.now().month)
+        repository.create(species)
+        assert repository.database == {species.id_: species}
+        assert repository.find(filters={"in_season": True}) \
+               == (1, [species])
+
+    def test_find_species_shouldnt_return_if_in_season(self,
+                                                     repository):
+        species = Species(season_start_month=datetime.now().month,
+                          season_end_month=datetime.now().month)
+        repository.create(species)
+        assert repository.database == {species.id_: species}
+        assert repository.find(filters={"in_season": False}) \
+               == (0, [])
+
+    def test_find_species_should_return_if_not_in_season(self,
+                                                         repository):
+        species = Species(season_start_month=(datetime.now().month - 1) % 13,
+                          season_end_month=(datetime.now().month - 1) % 13)
+        repository.create(species)
+        assert repository.database == {species.id_: species}
+        assert repository.find(filters={"in_season": False}) \
+               == (1, [species])
+
+    def test_find_species_shouldnt_return_if_not_in_season(self,
+                                                         repository):
+        species = Species(season_start_month=(datetime.now().month - 1) % 13,
+                          season_end_month=(datetime.now().month - 1) % 13)
+        repository.create(species)
+        assert repository.database == {species.id_: species}
+        assert repository.find(filters={"in_season": True}) \
                == (0, [])
