@@ -39,6 +39,12 @@ class Species(Entity):
         self.approved_by = approver
 
     def is_in_season_in_month(self, month: int) -> bool:
+        """
+        Checks if the species is in season in a given month
+
+        :param month: month to check
+        :return: true if in season, false otherwise
+        """
         if self.season_start_month and self.season_end_month:
             month_is_in_between_start_and_end = self.season_start_month \
                                                 <= month \

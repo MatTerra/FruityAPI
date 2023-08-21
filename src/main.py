@@ -4,7 +4,6 @@ import firebase_admin
 from fastapi import FastAPI
 from firebase_admin import credentials
 
-from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from infra.routers.species_router import species_v1_router
 from infra.repository import RepositoryContainer
 

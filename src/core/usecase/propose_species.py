@@ -13,8 +13,8 @@ class ProposeSpeciesRequestInput(BaseModel):
     scientific_name: Optional[str] = ""
     popular_names: Optional[list[str]]
     description: Optional[str] = ""
-    links: Optional[list[str]]
-    pictures_url: Optional[list[str]]
+    links: Optional[list[str]] = []
+    pictures_url: Optional[list[str]] = []
     season_start_month: Optional[int]
     season_end_month: Optional[int]
 
@@ -24,8 +24,8 @@ class ProposeSpeciesInput(UseCaseInput):
     scientific_name: Optional[str] = ""
     popular_names: Optional[list[str]] = None
     description: Optional[str] = ""
-    links: Optional[list[str]] = None
-    pictures_url: Optional[list[str]] = None
+    links: Optional[list[str]] = []
+    pictures_url: Optional[list[str]] = []
     season_start_month: Optional[int] = None
     season_end_month: Optional[int] = None
 
