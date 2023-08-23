@@ -14,8 +14,7 @@ class TestListUnapprovedSpecies:
     def cagaita(self):
         return Species(popular_names=["cagaita"],
                        scientific_name="eugenia dysenterica",
-                       approved=True,
-                       approved_by="admin",
+                       approved=False,
                        creator="tester",
                        season_start_month=9,
                        season_end_month=10)
@@ -24,27 +23,28 @@ class TestListUnapprovedSpecies:
     def cajuzinho(self):
         return Species(popular_names=["cajuzinho do cerrado", "caju anão"],
                        scientific_name="anacardium humile",
-                       approved=True,
-                       approved_by="admin2",
+                       approved=False,
                        creator="admin",
                        season_start_month=10,
                        season_end_month=12)
 
     @fixture
-    def not_approved(self):
+    def approved(self):
         return Species(popular_names=["algo"],
-                       creator="user")
+                       creator="user",
+                       approved=True,
+                       approved_by="admin")
 
-    async def test_list_unapproved_species_without_filter_shouldnt_return_non_approved(
+    async def test_list_unapproved_species_without_filter_should_return_only_non_approved(
             self,
             cagaita,
             cajuzinho,
-            not_approved
+            approved
     ):
         repository = SpeciesMemoryRepository()
         repository.create(cagaita)
         repository.create(cajuzinho)
-        repository.create(not_approved)
+        repository.create(approved)
         with container.species.override(repository):
             list_unapproved_species = ListUnapprovedSpecies()
             results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput())
@@ -54,12 +54,12 @@ class TestListUnapprovedSpecies:
             self,
             cagaita,
             cajuzinho,
-            not_approved
+            approved
     ):
         repository = SpeciesMemoryRepository()
         repository.create(cagaita)
         repository.create(cajuzinho)
-        repository.create(not_approved)
+        repository.create(approved)
         with container.species.override(repository):
             list_unapproved_species = ListUnapprovedSpecies()
             results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput(
@@ -71,12 +71,12 @@ class TestListUnapprovedSpecies:
             self,
             cagaita,
             cajuzinho,
-            not_approved
+            approved
     ):
         repository = SpeciesMemoryRepository()
         repository.create(cagaita)
         repository.create(cajuzinho)
-        repository.create(not_approved)
+        repository.create(approved)
         with container.species.override(repository):
             list_unapproved_species = ListUnapprovedSpecies()
             results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput(
@@ -88,59 +88,15 @@ class TestListUnapprovedSpecies:
             self,
             cagaita,
             cajuzinho,
-            not_approved
+            approved
     ):
         repository = SpeciesMemoryRepository()
         repository.create(cagaita)
         repository.create(cajuzinho)
-        repository.create(not_approved)
+        repository.create(approved)
         with container.species.override(repository):
             list_unapproved_species = ListUnapprovedSpecies()
             results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput(
                 popular_name="cagaita"
             ))
             assert results == (3, [cagaita])
-
-    async def test_list_unapproved_species_in_season_should_return(
-            self,
-            cagaita,
-            cajuzinho,
-            not_approved,
-            monkeypatch
-    ):
-        repository = SpeciesMemoryRepository()
-        repository.create(cagaita)
-        repository.create(cajuzinho)
-        repository.create(not_approved)
-        datetime_mock = MagicMock(wrap=datetime.datetime)
-        datetime_mock.now.return_value = datetime.datetime(
-            2022, 9, 10, 0, 0, 0)
-        monkeypatch.setattr(datetime, "datetime", datetime_mock)
-        with container.species.override(repository):
-            list_unapproved_species = ListUnapprovedSpecies()
-            results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput(
-                in_season=True
-            ))
-            assert results == (3, [cagaita])
-
-    async def test_list_unapproved_species_not_in_season_should_return(
-            self,
-            cagaita,
-            cajuzinho,
-            not_approved,
-            monkeypatch
-    ):
-        repository = SpeciesMemoryRepository()
-        repository.create(cagaita)
-        repository.create(cajuzinho)
-        repository.create(not_approved)
-        datetime_mock = MagicMock(wrap=datetime.datetime)
-        datetime_mock.now.return_value = datetime.datetime(
-            2022, 9, 10, 0, 0, 0)
-        monkeypatch.setattr(datetime, "datetime", datetime_mock)
-        with container.species.override(repository):
-            list_unapproved_species = ListUnapprovedSpecies()
-            results = await list_unapproved_species.execute(ListUnapprovedSpeciesInput(
-                in_season=False
-            ))
-            assert results == (3, [cajuzinho])

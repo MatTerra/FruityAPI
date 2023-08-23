@@ -25,6 +25,7 @@ def find_species(popular_name: str | None = None,
     find_species_handler = FindSpecies()
     return find_species_handler.execute(filters)
 
+
 @species_v1_router.get("/pending")
 @treat_exceptions
 def find_species(popular_name: str | None = None,
