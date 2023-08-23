@@ -7,13 +7,12 @@ from core.usecase import UseCase, UseCaseInput
 from infra.repository import RepositoryContainer
 
 
-class FindSpeciesInput(UseCaseInput):
+class ListUnapprovedSpeciesInput(UseCaseInput):
     scientific_name: Optional[str]
     popular_name: Optional[str]
-    in_season: Optional[bool]
 
 
-class FindSpecies(UseCase):
+class ListUnapprovedSpecies(UseCase):
     def __init__(
             self,
             repository: SpeciesRepository = Provide[
@@ -21,9 +20,9 @@ class FindSpecies(UseCase):
     ):
         self.repository = repository
 
-    async def execute(self, _input: FindSpeciesInput):
+    async def execute(self, _input: ListUnapprovedSpeciesInput):
         input_filters = {_filter: value
                          for _filter, value in _input.__dict__.items()
                          if value is not None}
-        return self.repository.find(filters={"approved": True,
+        return self.repository.find(filters={"approved": False,
                                              **input_filters})

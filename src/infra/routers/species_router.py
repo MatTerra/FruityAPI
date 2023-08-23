@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
 from core.usecase.get_species import GetSpecies, GetSpeciesInput
+from core.usecase.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
 from core.usecase.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
 from infra.authentication import get_user
@@ -22,6 +23,20 @@ def find_species(popular_name: str | None = None,
     filters.scientific_name = scientific_name
     filters.popular_name = popular_name
     find_species_handler = FindSpecies()
+    return find_species_handler.execute(filters)
+
+@species_v1_router.get("/pending")
+@treat_exceptions
+def find_species(popular_name: str | None = None,
+                 scientific_name: str | None = None,
+                 user=Depends(get_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403,
+                            detail="Only admins can list pending species")
+    filters = ListUnapprovedSpeciesInput()
+    filters.scientific_name = scientific_name
+    filters.popular_name = popular_name
+    find_species_handler = ListUnapprovedSpecies()
     return find_species_handler.execute(filters)
 
 
