@@ -15,10 +15,10 @@ RUN pip install --no-cache-dir --upgrade pip && pip install -I --prefix=/install
 FROM cgr.dev/chainguard/python:latest-dev
 USER nonroot
 ENV PROCESSES 1
-ENV PORT 80
+ENV PORT 8080
 ENV THREAD 1
 ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages:/app
-EXPOSE 80
+EXPOSE 8080
 COPY src/ /app
 COPY --chown=nonroot:nonroot wsgi.ini /app/wsgi.ini
 COPY --from=build-env /install /usr/local
