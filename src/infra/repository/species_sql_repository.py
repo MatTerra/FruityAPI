@@ -22,7 +22,9 @@ class SpeciesSQLRepository(SpeciesRepository):
     def findOne(self, filters: dict):
         return self.dao.get_all(1, 0, filters)
 
-    def find(self, length=20, offset=0, filters: dict = None):
+    def find(self, length=20, offset=0, filters=None):
+        if filters is None:
+            filters = {}
         in_season = None
         if "in_season" in filters:
             in_season = filters.get("in_season")
