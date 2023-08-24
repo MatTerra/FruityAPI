@@ -24,5 +24,7 @@ COPY --chown=nonroot:nonroot wsgi.ini /app/wsgi.ini
 COPY --from=build-env /install /usr/local
 COPY --from=build-uwsgi /usr/bin/uwsgi /app/uwsgi
 COPY --from=build-uwsgi /usr/lib/x86_64-linux-gnu/libpython3.11.so.1.0 /usr/lib/x86_64-linux-gnu/libpython3.11.so.1.0
+COPY --from=build-uwsgi /usr/lib/x86_64-linux-gnu/libpcre.so.3 /usr/lib/x86_64-linux-gnu/libpcre.so.3
+COPY --from=build-uwsgi /usr/lib/x86_64-linux-gnu/libcrypt.so.1 /usr/lib/x86_64-linux-gnu/libcrypt.so.1
 WORKDIR /app
 ENTRYPOINT ["/app/uwsgi", "--ini", "/app/wsgi.ini"]
