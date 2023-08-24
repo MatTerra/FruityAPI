@@ -1,6 +1,6 @@
 FROM debian:12 AS build-uwsgi
 RUN apt-get update && \
-    apt-get -y install build-essential wget python3-dev && \
+    apt-get -y install build-essential wget python3-dev libpcre3 libpcre3-dev && \
     wget https://files.pythonhosted.org/packages/b3/8e/b4fb9f793745afd6afcc0d2443d5626132e5d3540de98f28a8b8f5c753f9/uwsgi-2.0.21.tar.gz && \
     tar zxvf uwsgi-2.0.21.tar.gz && \
     cd uwsgi-2.0.21 && \
