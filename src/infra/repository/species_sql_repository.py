@@ -23,11 +23,10 @@ class SpeciesSQLRepository(SpeciesRepository):
         return self.dao.get_all(1, 0, filters)
 
     def find(self, length=20, offset=0, filters=None):
-        if filters is None:
-            filters = {}
+        filters = filters if filters else {}
         in_season = None
         if "in_season" in filters:
-            in_season = filters.get("in_season")
+            in_season = filters["in_season"]
             del filters["in_season"]
         if "popular_name" in filters:
             value = filters["popular_name"]

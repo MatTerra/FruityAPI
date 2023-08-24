@@ -63,8 +63,7 @@ class SpeciesMemoryRepository(SpeciesRepository):
 
     def find(self, length=20, offset=0, filters=None) \
             -> (int, list[Species]):
-        if filters is None:
-            filters = {}
+        filters = filters if filters else {}
         results = []
         for _id, species in self.database.items():
             for _property, value in filters.items():
