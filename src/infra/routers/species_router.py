@@ -15,7 +15,7 @@ species_v1_router = APIRouter(
 )
 
 
-@species_v1_router.get("/")
+@species_v1_router.get("")
 @treat_exceptions
 def find_species(popular_name: str | None = None,
                  scientific_name: str | None = None):
@@ -41,7 +41,7 @@ def find_species(popular_name: str | None = None,
     return find_species_handler.execute(filters)
 
 
-@species_v1_router.post("/")
+@species_v1_router.post("")
 @treat_exceptions
 def propose_species(values: ProposeSpeciesRequestInput,
                     user=Depends(get_user)):

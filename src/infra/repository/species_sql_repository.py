@@ -32,7 +32,7 @@ class SpeciesSQLRepository(SpeciesRepository):
             value = filters["popular_name"]
             del filters["popular_name"]
             filters["popular_names"] = ["@>", '{"' + value + '"}']
-        if in_season is not None:
+        if in_season is None:
             return self.dao.get_all(filters=filters)
         else:
             filters_, query_params = self.dao._generate_filters(
