@@ -22,7 +22,7 @@ class ProposeSpeciesRequestInput(BaseModel):
 class ProposeSpeciesInput(UseCaseInput):
     creator: str = ...
     scientific_name: Optional[str] = ""
-    popular_names: Optional[list[str]] = None
+    popular_names: Optional[list[str]] = []
     description: Optional[str] = ""
     links: Optional[list[str]] = []
     pictures_url: Optional[list[str]] = []
@@ -32,6 +32,21 @@ class ProposeSpeciesInput(UseCaseInput):
     @validator('season_start_month', 'season_end_month')
     def check_month(cls, v):
         assert is_valid_month(v)
+        return v
+
+    @validator('popular_names', 'pictures_url', 'links')
+    def check_is_list(cls, v):
+        assert isinstance(v, list) if v is not None else True
+        return v
+
+    @validator('creator', 'scientific_name')
+    def check_is_str(cls, v):
+        assert isinstance(v, str) if v is not None else True
+        return v
+
+    @validator('description')
+    def check_length_and_type(cls, v):
+        assert isinstance(v, str) and len(v) <= 255 if v is not None else True
         return v
 
 

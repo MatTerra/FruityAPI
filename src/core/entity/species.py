@@ -17,7 +17,8 @@ class Species(Entity):
     approved_by: str = field(default="")
     scientific_name: str = field(default="")
     popular_names: list = field(default_factory=list)
-    description: str = field(default="")
+    description: str = field(default="",
+                             metadata={"type": "VARCHAR(256)"})
     links: list = field(default_factory=list)
     pictures_url: list = field(default_factory=list)
     season_start_month: int = field(default=None,
