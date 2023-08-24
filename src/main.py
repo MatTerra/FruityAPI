@@ -21,3 +21,6 @@ firebase_admin.initialize_app(cred)
 app = FastAPI()
 app.container = repository_container
 app.include_router(species_v1_router)
+if (bool(os.getenv("WSGI"))):
+    from a2wsgi import ASGIMiddleware
+    app = ASGIMiddleware(app)
