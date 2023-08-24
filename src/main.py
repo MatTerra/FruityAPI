@@ -11,16 +11,12 @@ from infra.repository import RepositoryContainer
 repository_container = RepositoryContainer()
 repository_container.wire(packages=["core", "infra"])
 TEST = bool(os.getenv("TEST"))
-if(bool(os.getenv("CREATE_DB"))):
+if (bool(os.getenv("CREATE_DB"))):
     SpeciesSQLDAO().create_table_if_not_exists()
 
 cred = credentials.Certificate('firebase_cred.json')
 firebase_admin.initialize_app(cred)
 
-
 app = FastAPI()
 app.container = repository_container
 app.include_router(species_v1_router)
-if (bool(os.getenv("WSGI"))):
-    from a2wsgi import ASGIMiddleware
-    app = ASGIMiddleware(app)
