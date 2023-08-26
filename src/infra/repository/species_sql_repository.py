@@ -11,7 +11,7 @@ from core.repository.species_repository import SpeciesRepository
 
 class SpeciesSQLRepository(SpeciesRepository):
     def __init__(self):
-        self.dao = SpeciesSQLDAO(pooled=False)
+        self.dao = SpeciesSQLDAO()
 
     def create(self, entity: Species):
         return self.dao.create(entity)
