@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from nova_api import Entity
 
@@ -25,6 +24,19 @@ class Species(Entity):
                                     metadata={"validation": is_valid_month})
     season_end_month: int = field(default=None,
                                   metadata={"validation": is_valid_month})
+
+    def __post_init__(self):
+        if isinstance(self.popular_names, str):
+            self.popular_names = Species.parse_db_array(self.popular_names)
+        if isinstance(self.links, str):
+            self.links = Species.parse_db_array(self.links)
+        if isinstance(self.pictures_url, str):
+            self.pictures_url = Species.parse_db_array(self.pictures_url)
+
+    @staticmethod
+    def parse_db_array(array):
+        db_array = array.strip().replace('{', '').replace('}', '').split(',')
+        return list(filter(lambda v: v != "", map(lambda v: v.strip(), db_array)))
 
     def approve(self, approver: str) -> None:
         """
