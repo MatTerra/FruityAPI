@@ -15,6 +15,7 @@ TEST = bool(os.getenv("TEST"))
 if (bool(os.getenv("CREATE_DB"))):
     dao = SpeciesSQLDAO()
     dao.create_table_if_not_exists()
+    dao.close()
 
 cred = credentials.Certificate('firebase_cred.json')
 firebase_admin.initialize_app(cred)
