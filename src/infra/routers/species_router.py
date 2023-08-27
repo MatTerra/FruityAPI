@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
+from core.usecase.deny_species import DenySpecies, DenySpeciesInput
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
 from core.usecase.get_species import GetSpecies, GetSpeciesInput
 from core.usecase.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
@@ -62,6 +63,19 @@ def approve_species(species_id: str,
         ApproveSpeciesInput(species=species_id,
                             approver=user.get("sub"))
     )
+
+
+@species_v1_router.post("/{species_id}/deny")
+@treat_exceptions
+def approve_species(species_id: str,
+                    user=Depends(get_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403,
+                            detail="Only admins can deny species")
+    deny_species_handler = DenySpecies()
+    return deny_species_handler.execute(
+        DenySpeciesInput(species=species_id,
+                         denier=user.get("sub")))
 
 
 @species_v1_router.get("/{species_id}")
