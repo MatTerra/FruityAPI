@@ -53,7 +53,7 @@ class SpeciesSQLRepository(SpeciesRepository):
         return self.dao.get(_id)
 
     def delete(self, _id: str):
-        return self.dao.remove(filters={"_id": _id})
+        return self.dao.remove(filters={"id_": _id})
 
 
 class SpeciesSQLDAO(GenericSQLDAO):
