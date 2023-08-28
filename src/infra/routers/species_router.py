@@ -27,13 +27,15 @@ def find_species(popular_name: str | None = None,
     find_species_handler = FindSpecies()
     return find_species_handler.execute(filters)
 
+
 @species_v1_router.get("/my-species")
 @treat_exceptions
-def find_species(approved: bool | None = None,
-                 user=Depends(get_user)):
-    filters = ListUserProposalsSpeciesInput()
+def find_my_proposals_species(approved: bool | None = None,
+                              user=Depends(get_user)):
+    filters = ListUserProposalsSpeciesInput(
+        creator=user.get("sub")
+    )
     filters.approved = approved
-    filters.creator = user.get("sub")
     list_user_proposals_species_handler = ListUserProposalsSpecies()
     return list_user_proposals_species_handler.execute(filters)
 
