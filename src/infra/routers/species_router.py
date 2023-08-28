@@ -5,6 +5,7 @@ from core.usecase.deny_species import DenySpecies, DenySpeciesInput
 from core.usecase.find_species import FindSpecies, FindSpeciesInput
 from core.usecase.get_species import GetSpecies, GetSpeciesInput
 from core.usecase.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
+from core.usecase.list_user_proposals import ListUserProposalsSpeciesInput, ListUserProposalsSpecies
 from core.usecase.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
 from infra.authentication import get_user
@@ -25,6 +26,16 @@ def find_species(popular_name: str | None = None,
     filters.popular_name = popular_name
     find_species_handler = FindSpecies()
     return find_species_handler.execute(filters)
+
+@species_v1_router.get("/my-species")
+@treat_exceptions
+def find_species(approved: bool | None = None,
+                 user=Depends(get_user)):
+    filters = ListUserProposalsSpeciesInput()
+    filters.approved = approved
+    filters.creator = user.get("sub")
+    list_user_proposals_species_handler = ListUserProposalsSpecies()
+    return list_user_proposals_species_handler.execute(filters)
 
 
 @species_v1_router.get("/pending")
