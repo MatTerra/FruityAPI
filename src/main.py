@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from firebase_admin import credentials
 
 from infra.repository.species_sql_repository import SpeciesSQLDAO
+from infra.repository.tree_sql_repository import TreeSQLDAO
 from infra.routers.species_router import species_v1_router
 from infra.repository import RepositoryContainer
 
@@ -14,6 +15,9 @@ repository_container.wire(packages=["core", "infra"])
 TEST = bool(os.getenv("TEST"))
 if (bool(os.getenv("CREATE_DB"))):
     dao = SpeciesSQLDAO()
+    dao.create_table_if_not_exists()
+    dao.close()
+    dao = TreeSQLDAO()
     dao.create_table_if_not_exists()
     dao.close()
 
