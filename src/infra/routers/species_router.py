@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
-from core.usecase.deny_species import DenySpecies, DenySpeciesInput
-from core.usecase.find_species import FindSpecies, FindSpeciesInput
-from core.usecase.get_species import GetSpecies, GetSpeciesInput
-from core.usecase.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
-from core.usecase.list_user_proposals import ListUserProposalsSpeciesInput, ListUserProposalsSpecies
-from core.usecase.propose_species import ProposeSpecies, \
+from core.usecase.species.approve_species import ApproveSpecies, ApproveSpeciesInput
+from core.usecase.species.deny_species import DenySpecies, DenySpeciesInput
+from core.usecase.species.find_species import FindSpecies, FindSpeciesInput
+from core.usecase.species.get_species import GetSpecies, GetSpeciesInput
+from core.usecase.species.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
+from core.usecase.species.list_user_proposals import ListUserProposalsSpeciesInput, ListUserProposalsSpecies
+from core.usecase.species.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
 from infra.authentication import get_user
 from infra.exceptions import treat_exceptions

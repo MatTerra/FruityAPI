@@ -1,10 +1,7 @@
-import datetime
-from unittest.mock import MagicMock
-
 from pytest import fixture
 
 from core.entity.species import Species
-from core.usecase.list_unapproved_species import ListUnapprovedSpecies, ListUnapprovedSpeciesInput
+from core.usecase.species.list_unapproved_species import ListUnapprovedSpecies, ListUnapprovedSpeciesInput
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from test import container
 

@@ -1,12 +1,8 @@
-from dependency_injector.wiring import Provide, inject
-from pydantic import ValidationError
 from pytest import raises
 
 from core.entity.species import Species
-from core.repository.species_repository import SpeciesRepository
-from core.usecase.approve_species import ApproveSpecies, ApproveSpeciesInput
+from core.usecase.species.approve_species import ApproveSpecies, ApproveSpeciesInput
 from infra.exceptions import SpeciesAlreadyApprovedException
-from infra.repository import RepositoryContainer
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from test import container
 

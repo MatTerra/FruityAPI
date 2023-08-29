@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 from pytest import mark, raises
 
-from core.usecase.propose_species import ProposeSpecies, ProposeSpeciesInput
+from core.usecase.species.propose_species import ProposeSpecies, ProposeSpeciesInput
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 
 from test import container

@@ -1,11 +1,8 @@
-import datetime
-from unittest.mock import MagicMock
-
 from pydantic import ValidationError
 from pytest import fixture, raises
 
 from core.entity.species import Species
-from core.usecase.get_species import GetSpecies, GetSpeciesInput
+from core.usecase.species.get_species import GetSpecies, GetSpeciesInput
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from test import container
 
