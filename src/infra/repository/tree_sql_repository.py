@@ -1,4 +1,3 @@
-import datetime
 from typing import Type
 
 from nova_api.dao.generic_sql_dao import GenericSQLDAO
@@ -38,7 +37,7 @@ class TreeSQLRepository(TreeRepository):
             filters_, query_params = self.dao._generate_filters(
                 filters=filters)
             filters_ += \
-                f" ST_DWithin({self.dao.fields['location']}::geography, ST_GeogFromText('POINT(%s %s)'),10000, false)"
+                f" ST_DWithin({self.dao.fields['location']}::geography, ST_GeogFromText('POINT(%s %s)'),%s, false)"
             query_params.extend(near)
             return self.dao.get_all_by_custom_query(filters_, query_params,
                                                     length, offset)
@@ -65,14 +64,12 @@ class TreeSQLDAO(GenericSQLDAO):
             return_class=Tree,
             **kwargs
         )
-        self.database.ALLOWED_COMPARATORS.append('<->')
 
     def create_table_if_not_exists(self) -> None:
         super().create_table_if_not_exists()
         self.database.query(f"CREATE INDEX ON tree USING GIST({self.fields['location']})")
 
     def get_all_by_custom_query(self, filters, params, length=20, offset=0):
-
         query = self.database.SELECT_QUERY.format(
             fields=', '.join(self.fields.values()).replace('tree_location', 'ST_AsGeoJSON(tree_location) as tree_location'),
             table=self.table,
