@@ -8,6 +8,7 @@ from firebase_admin import credentials
 from infra.repository.species_sql_repository import SpeciesSQLDAO
 from infra.repository.tree_sql_repository import TreeSQLDAO
 from infra.routers.species_router import species_v1_router
+from infra.routers.tree_router import tree_v1_router
 from infra.repository import RepositoryContainer
 
 repository_container = RepositoryContainer()
@@ -34,3 +35,4 @@ app.add_middleware(CORSMiddleware,
                    allow_headers=["*"])
 app.container = repository_container
 app.include_router(species_v1_router)
+app.include_router(tree_v1_router)
