@@ -68,6 +68,12 @@ class TreeSQLDAO(GenericSQLDAO):
     def create_table_if_not_exists(self) -> None:
         super().create_table_if_not_exists()
         self.database.query(f"CREATE INDEX ON tree USING GIST({self.fields['location']})")
+        self.database.query(
+            f"ALTER TABLE tree "
+            f"ADD CONSTRAINT tree_species "
+            f"FOREIGN KEY ({self.fields['species']}) "
+            f"REFERENCES species (species_id_);"
+        )
 
     def get_all_by_custom_query(self, filters, params, length=20, offset=0):
         query = self.database.SELECT_QUERY.format(
