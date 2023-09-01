@@ -6,11 +6,13 @@ from nova_api.persistence.postgresql_helper import PostgreSQLHelper
 
 from core.entity.tree import Tree
 from core.repository.tree_repository import TreeRepository
+from infra.repository.species_sql_repository import SpeciesSQLDAO, SpeciesSQLRepository
 
 
 class TreeSQLRepository(TreeRepository):
     def __init__(self, dao=None):
-        self.dao = TreeSQLDAO() if dao is None else dao
+        self.dao = dao or TreeSQLDAO()
+        self.species_repository = SpeciesSQLRepository(SpeciesSQLDAO(database_instance=self.dao.database))
 
     def create(self, entity: Tree):
         return self.dao.create(entity)
@@ -24,23 +26,35 @@ class TreeSQLRepository(TreeRepository):
         except IndexError:
             return None
 
-    def find(self, length=20, offset=0, filters=None):
+    def find(self, length=20, offset=0, filters=None, include_species=True):
         filters = filters if filters else {}
         near = None
+
         if "near" in filters:
             near = filters["near"]
             del filters["near"]
+
         if near is None:
             filters, query_params = self.dao._generate_filters(filters=filters) if filters else ('', [])
-            return self.dao.get_all_by_custom_query(filters, query_params, length, offset)
         else:
-            filters_, query_params = self.dao._generate_filters(
+            filters, query_params = self.dao._generate_filters(
                 filters=filters)
-            filters_ += \
+            filters += \
                 f" ST_DWithin({self.dao.fields['location']}::geography, ST_GeogFromText('POINT(%s %s)'),%s, false)"
             query_params.extend(near)
-            return self.dao.get_all_by_custom_query(filters_, query_params,
-                                                    length, offset)
+
+        total, return_list = self.dao.get_all_by_custom_query(filters, query_params, length, offset)
+        species_set = set([tree.species.id_ for tree in return_list])
+
+        if len(return_list) > 0 and include_species:
+            species = {specie.id_: specie for specie in self.species_repository.find(
+                filters={"id_": ["IN", str(tuple(species_set))]}, length=len(species_set), offset=0
+            )[1]}
+
+            for tree in return_list:
+                tree.species = species[tree.species.id_]
+
+        return total, return_list
 
     def findById(self, _id: str):
         try:
@@ -77,7 +91,8 @@ class TreeSQLDAO(GenericSQLDAO):
 
     def get_all_by_custom_query(self, filters, params, length=20, offset=0):
         query = self.database.SELECT_QUERY.format(
-            fields=', '.join(self.fields.values()).replace('tree_location', 'ST_AsGeoJSON(tree_location) as tree_location'),
+            fields=', '.join(self.fields.values()).replace('tree_location',
+                                                           'ST_AsGeoJSON(tree_location) as tree_location'),
             table=self.table,
             filters=filters
         )

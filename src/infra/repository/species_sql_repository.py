@@ -10,8 +10,8 @@ from core.repository.species_repository import SpeciesRepository
 
 
 class SpeciesSQLRepository(SpeciesRepository):
-    def __init__(self):
-        self.dao = SpeciesSQLDAO()
+    def __init__(self, dao=None):
+        self.dao = dao or SpeciesSQLDAO()
 
     def create(self, entity: Species):
         return self.dao.create(entity)
@@ -45,7 +45,7 @@ class SpeciesSQLRepository(SpeciesRepository):
                         f"%s AND {season_end} >= " \
                         f"%s) OR ({start_is_not_before_end} AND " \
                         f"({season_start} <= %s OR {season_end} >= %s)))"
-            query_params.extend([datetime.datetime.now().month]*4)
+            query_params.extend([datetime.datetime.now().month] * 4)
             return self.dao.get_all_by_custom_query(filters_, query_params,
                                                     length, offset)
 
@@ -69,6 +69,7 @@ class SpeciesSQLDAO(GenericSQLDAO):
             **kwargs
         )
         self.database.ALLOWED_COMPARATORS.append('@>')
+        self.database.ALLOWED_COMPARATORS.append('IN')
 
     def get_all_by_custom_query(self, filters, params, length=20, offset=0):
         query = self.database.SELECT_QUERY.format(
