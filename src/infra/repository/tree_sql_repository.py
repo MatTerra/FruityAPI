@@ -32,7 +32,7 @@ class TreeSQLRepository(TreeRepository):
             del filters["near"]
         if near is None:
             filters, query_params = self.dao._generate_filters(filters=filters) if filters else ('', [])
-            return self.dao.get_all_by_custom_query(filters, query_params, 1, 0)
+            return self.dao.get_all_by_custom_query(filters, query_params, length, offset)
         else:
             filters_, query_params = self.dao._generate_filters(
                 filters=filters)
