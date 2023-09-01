@@ -24,7 +24,7 @@ class CreateTreeInput(UseCaseInput):
     species: Optional[str] = ""
     variety: Optional[str] = ""
     description: Optional[str] = ""
-    location: Optional[tuple[float, float]] = ()
+    location: Optional[list[float]] = ()
     pictures_url: Optional[list[str]] = []
     producing: Optional[bool] = False
 

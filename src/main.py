@@ -14,7 +14,7 @@ from infra.repository import RepositoryContainer
 repository_container = RepositoryContainer()
 repository_container.wire(packages=["core", "infra"])
 TEST = bool(os.getenv("TEST"))
-if (bool(os.getenv("CREATE_DB"))):
+if bool(os.getenv("CREATE_DB")):
     dao = SpeciesSQLDAO()
     dao.create_table_if_not_exists()
     dao.close()
