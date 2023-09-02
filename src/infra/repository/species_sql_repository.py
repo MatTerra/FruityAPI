@@ -23,6 +23,7 @@ class SpeciesSQLRepository(SpeciesRepository):
         return self.dao.get_all(1, 0, filters)
 
     def find(self, length=20, offset=0, filters=None):
+        print("GET TREES")
         filters = filters if filters else {}
         in_season = None
         if "in_season" in filters:
@@ -33,6 +34,7 @@ class SpeciesSQLRepository(SpeciesRepository):
             del filters["popular_name"]
             filters["popular_names"] = ["@>", '{"' + value + '"}']
         if in_season is None:
+            print("CALLING GET ALL")
             return self.dao.get_all(filters=filters)
         else:
             filters_, query_params = self.dao._generate_filters(
@@ -58,6 +60,7 @@ class SpeciesSQLRepository(SpeciesRepository):
 
 class SpeciesSQLDAO(GenericSQLDAO):
     table = 'species'
+    FILTER = "`{column}` {comparator}{arg}"
 
     def __init__(self,
                  database_type: Type[PersistenceHelper] = PostgreSQLHelper,
@@ -70,6 +73,77 @@ class SpeciesSQLDAO(GenericSQLDAO):
         )
         self.database.ALLOWED_COMPARATORS.append('@>')
         self.database.ALLOWED_COMPARATORS.append('IN')
+
+    def _generate_filters(self, filters: dict) -> (str, list[str]):
+        print("GENERATING FILTERS")
+        if filters is None:
+            raise ValueError("No filters where passed! Filters must be a dict "
+                             "with param names, expected values and "
+                             "comparators in this form: "
+                             "{'param':['comparator', 'value']} "
+                             "or {'param': 'value'} for equality.")
+
+        if not isinstance(filters, dict):
+            raise TypeError("Filters where passed not as dict!"
+                            " Filters must be a dict "
+                            "with param names, expected values and "
+                            "comparators in this form: "
+                            "{'param':['comparator', 'value']} "
+                            "or {'param': 'value'} for equality.")
+
+        query_params_ = [
+            item[1]
+            if isinstance(item, list)
+            else item
+            for item in filters.values()
+        ]
+
+        query_params = []
+        for param in query_params_:
+            if not isinstance(param, list):
+                query_params_.append(param)
+            else:
+                query_params.extend(param)
+
+        print("QUERY PARAMS")
+
+        field_keys = self.fields.keys()
+        for property_, value in filters.items():
+            if property_ not in field_keys:
+                self.logger.error("Property %s not available in %s for "
+                                  "get_all.",
+                                  property_,
+                                  self.return_class.__name__)
+                raise ValueError(
+                    f"Property {property_} not available "
+                    f"in {self.return_class.__name__}."
+                )
+            if isinstance(value, list) \
+                    and value[0] not in self.database.ALLOWED_COMPARATORS:
+                self.logger.error("Comparator %s not available in %s for "
+                                  "get_all.",
+                                  value[0],
+                                  self.return_class.__name__)
+                raise ValueError(
+                    f"Comparator {value[0]} not allowed "
+                    f"for {self.return_class.__name__}"
+                )
+
+        filters_for_query = [
+            self.database.FILTER.format(
+                column=self.fields[filter_],
+                comparator=(filters[filter_][0]
+                            if isinstance(filters[filter_], list)
+                            else '='),
+                arg=" %s" if filter_ != 'IN' else "(" + ", ".join(["%s"] * (len(filters[filter_][1]))) + ")")
+            for filter_ in filters.keys()
+        ]
+        filters_ = self.database.FILTERS.format(
+            filters=' AND '.join(filters_for_query))
+        print("FILTERS")
+        print(filters_)
+
+        return filters_, query_params
 
     def get_all_by_custom_query(self, filters, params, length=20, offset=0):
         query = self.database.SELECT_QUERY.format(
