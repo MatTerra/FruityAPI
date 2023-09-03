@@ -27,7 +27,6 @@ class TreeSQLRepository(TreeRepository):
             return None
 
     def find(self, length=20, offset=0, filters=None, include_species=True):
-        print("FIND")
         filters = filters if filters else {}
         near = None
 
@@ -45,17 +44,15 @@ class TreeSQLRepository(TreeRepository):
             query_params.extend(near)
 
         total, return_list = self.dao.get_all_by_custom_query(filters, query_params, length, offset)
-        print("GOT TREES, GETTING SPECIES")
         species_set = set([tree.species.id_ for tree in return_list])
 
         if len(return_list) > 0 and include_species:
             species = {specie.id_: specie for specie in self.species_repository.find(
-                filters={"id_": ["IN", species_set]}, length=len(species_set), offset=0
+                filters={"id_": ["IN", list(species_set)]}, length=len(species_set), offset=0
             )[1]}
 
             for tree in return_list:
                 tree.species = species[tree.species.id_]
-        print("DONE")
 
         return total, return_list
 
