@@ -2,7 +2,6 @@
 test/
 tf/
 venv/
-firebase_cred.json
 pytest.ini
 .gitignore
 Dockerfile

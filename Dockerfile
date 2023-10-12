@@ -4,8 +4,7 @@ RUN mkdir /app
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && pip install -I --prefix=/install --no-cache-dir -r requirements.txt && rm requirements.txt
 
-FROM cgr.dev/chainguard/python:latest-dev
-USER nonroot
+FROM python:3.11
 ENV PROCESSES 1
 ENV PORT 8080
 ENV THREAD 1
