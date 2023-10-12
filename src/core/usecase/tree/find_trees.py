@@ -11,6 +11,8 @@ class FindTreesInput(UseCaseInput):
     near: Optional[list[float]]
     producing: Optional[bool]
     in_season: Optional[bool]
+    length: Optional[int] = 10
+    offset: Optional[int] = 0
 
 
 class FindTrees(UseCase):
@@ -22,7 +24,11 @@ class FindTrees(UseCase):
         self.repository = repository
 
     async def execute(self, _input: FindTreesInput):
+        length = _input.length
+        del _input.length
+        offset = _input.offset
+        del _input.offset
         input_filters = {_filter: value
                          for _filter, value in _input.__dict__.items()
                          if value is not None}
-        return self.repository.find(filters={**input_filters})
+        return self.repository.find(filters={**input_filters}, length=length, offset=offset)

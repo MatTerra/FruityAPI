@@ -11,6 +11,8 @@ class FindSpeciesInput(UseCaseInput):
     scientific_name: Optional[str]
     popular_name: Optional[str]
     in_season: Optional[bool]
+    length: Optional[int] = 10
+    offset: Optional[int] = 0
 
 
 class FindSpecies(UseCase):
@@ -22,8 +24,12 @@ class FindSpecies(UseCase):
         self.repository = repository
 
     async def execute(self, _input: FindSpeciesInput):
+        length = _input.length
+        offset = _input.offset
+        del _input.length
+        del _input.offset
         input_filters = {_filter: value
                          for _filter, value in _input.__dict__.items()
                          if value is not None}
         return self.repository.find(filters={"approved": True,
-                                             **input_filters})
+                                             **input_filters}, length=length, offset=offset)

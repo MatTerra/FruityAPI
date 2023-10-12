@@ -12,9 +12,9 @@ health_v1_router = APIRouter(
 
 @health_v1_router.get("")
 @treat_exceptions
-def check_health():
+async def check_health():
     find_species_handler = FindSpecies()
-    find_species_handler.execute(FindSpeciesInput())
+    await find_species_handler.execute(FindSpeciesInput(length=1))
     find_trees_handler = FindTrees()
-    find_trees_handler.execute(FindTreesInput())
-    return "OK"
+    await find_trees_handler.execute(FindTreesInput(length=1))
+    return {"status": "OK"}

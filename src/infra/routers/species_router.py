@@ -20,8 +20,10 @@ species_v1_router = APIRouter(
 @species_v1_router.get("")
 @treat_exceptions
 def find_species(popular_name: str | None = None,
-                 scientific_name: str | None = None):
-    filters = FindSpeciesInput()
+                 scientific_name: str | None = None,
+                 length: int = 10,
+                 offset: int = 0):
+    filters = FindSpeciesInput(length=length, offset=offset)
     filters.scientific_name = scientific_name
     filters.popular_name = popular_name
     find_species_handler = FindSpecies()

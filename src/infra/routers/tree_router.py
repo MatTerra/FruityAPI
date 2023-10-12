@@ -19,12 +19,16 @@ def create_tree(values: CreateTreeRequestInput,
     _input = CreateTreeInput(**values.__dict__, creator=user.get("sub"))
     return create_tree_handler.execute(_input)
 
+
 @tree_v1_router.get("")
 @treat_exceptions
 def find_trees(near: list[float] | None = None,
                producing: bool | None = None,
-               in_season: bool | None = None):
-    filters = FindTreesInput()
+               in_season: bool | None = None,
+               length: int = 10,
+               offset: int = 0,
+               ):
+    filters = FindTreesInput(length=length, offset=offset)
     filters.near = near
     filters.producing = producing
     find_trees_handler = FindTrees()
