@@ -38,7 +38,8 @@ print("STARTED FIREBASE")
 print("STARTING APP")
 app = FastAPI()
 origins = ["http://localhost:57951",
-           "https://fruity.matterra.com.br"]
+           "https://fruity.matterra.com.br",
+           "https://fruity.app.matterra.com.br"]
 app.add_middleware(CORSMiddleware,
                    allow_origins=origins,
                    allow_credentials=True,
