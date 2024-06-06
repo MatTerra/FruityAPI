@@ -7,3 +7,4 @@ pydantic==1.10.2
 dependency_injector==4.40.0
 pytest-mock==3.10.0
 uvicorn[standard]
+mysql-connector-python>=8.4.0 # not directly required, pinned by Snyk to avoid a vulnerability
