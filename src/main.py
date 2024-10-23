@@ -19,8 +19,8 @@ repository_container = RepositoryContainer()
 repository_container.wire(packages=["core", "infra"])
 
 print("CREATED REPOSITORY CONTAINER")
-TEST = bool(os.getenv("TEST"))
-if bool(os.getenv("CREATE_DB")):
+TEST = bool(int(os.getenv("TEST", "0")))
+if bool(int(os.getenv("CREATE_DB", "0"))):
     print("CREATE DB")
     dao = SpeciesSQLDAO()
     dao.create_table_if_not_exists()

@@ -31,7 +31,7 @@ class SpeciesSQLRepository(SpeciesRepository):
         if "popular_name" in filters:
             value = filters["popular_name"]
             del filters["popular_name"]
-            filters["popular_names"] = ["@>", '{"' + value + '"}']
+            filters["popular_names"] = ["~~", '%' + value + '%']
         if in_season is None:
             return self.dao.get_all(filters=filters, length=length, offset=offset)
         else:
@@ -69,7 +69,7 @@ class SpeciesSQLDAO(GenericSQLDAO):
             return_class=Species,
             **kwargs
         )
-        self.database.ALLOWED_COMPARATORS.append('@>')
+        self.database.ALLOWED_COMPARATORS.append('~~')
         self.database.ALLOWED_COMPARATORS.append('IN')
 
     def _generate_filters(self, filters: dict) -> (str, list[str]):
