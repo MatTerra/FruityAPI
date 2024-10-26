@@ -1,5 +1,5 @@
 from dependency_injector.wiring import inject, Provide
-from googleapiclient.model import BaseModel
+from pydantic import BaseModel
 
 from core.entity.favorites import Favorites
 from core.repository.favorites_repository import FavoritesRepository

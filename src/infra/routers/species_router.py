@@ -71,7 +71,7 @@ def propose_species(values: ProposeSpeciesRequestInput,
 
 @species_v1_router.post("/favorite")
 @treat_exceptions
-def propose_species(values: FavoriteSpeciesRequestInput,
+def favorite_species(values: FavoriteSpeciesRequestInput,
                     user=Depends(get_user)):
     favorite_species_handler = FavoriteSpecies()
     _input = FavoriteSpeciesInput(**values.__dict__, user=user.get("sub"))
@@ -80,7 +80,7 @@ def propose_species(values: FavoriteSpeciesRequestInput,
 
 @species_v1_router.post("/unfavorite")
 @treat_exceptions
-def propose_species(values: UnfavoriteSpeciesRequestInput,
+def unfavorite_species(values: UnfavoriteSpeciesRequestInput,
                     user=Depends(get_user)):
     unfavorite_species_handler = UnfavoriteSpecies()
     _input = UnfavoriteSpeciesInput(**values.__dict__, creator=user.get("sub"))
