@@ -2,12 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from core.usecase.species.approve_species import ApproveSpecies, ApproveSpeciesInput
 from core.usecase.species.deny_species import DenySpecies, DenySpeciesInput
+from core.usecase.species.favorite_species import FavoriteSpeciesRequestInput, FavoriteSpecies, FavoriteSpeciesInput
 from core.usecase.species.find_species import FindSpecies, FindSpeciesInput
 from core.usecase.species.get_species import GetSpecies, GetSpeciesInput
 from core.usecase.species.list_unapproved_species import ListUnapprovedSpeciesInput, ListUnapprovedSpecies
 from core.usecase.species.list_user_proposals import ListUserProposalsSpeciesInput, ListUserProposalsSpecies
 from core.usecase.species.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
+from core.usecase.species.unfavorite_species import UnfavoriteSpeciesInput, UnfavoriteSpecies, \
+    UnfavoriteSpeciesRequestInput
 from infra.authentication import get_user
 from infra.exceptions import treat_exceptions
 
@@ -64,6 +67,24 @@ def propose_species(values: ProposeSpeciesRequestInput,
     propose_species_handler = ProposeSpecies()
     _input = ProposeSpeciesInput(**values.__dict__, creator=user.get("sub"))
     return propose_species_handler.execute(_input)
+
+
+@species_v1_router.post("/favorite")
+@treat_exceptions
+def propose_species(values: FavoriteSpeciesRequestInput,
+                    user=Depends(get_user)):
+    favorite_species_handler = FavoriteSpecies()
+    _input = FavoriteSpeciesInput(**values.__dict__, user=user.get("sub"))
+    return favorite_species_handler.execute(_input)
+
+
+@species_v1_router.post("/unfavorite")
+@treat_exceptions
+def propose_species(values: UnfavoriteSpeciesRequestInput,
+                    user=Depends(get_user)):
+    unfavorite_species_handler = UnfavoriteSpecies()
+    _input = UnfavoriteSpeciesInput(**values.__dict__, creator=user.get("sub"))
+    return unfavorite_species_handler.execute(_input)
 
 
 @species_v1_router.post("/{species_id}/approve")
