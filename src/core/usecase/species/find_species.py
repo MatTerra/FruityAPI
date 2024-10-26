@@ -32,16 +32,18 @@ class FindSpecies(UseCase):
     async def execute(self, _input: FindSpeciesInput):
         length = _input.length
         offset = _input.offset
+        user = _input.user
         del _input.length
         del _input.offset
+        del _input.user
         input_filters = {_filter: value
                          for _filter, value in _input.__dict__.items()
                          if value is not None}
         species = self.repository.find(filters={"approved": True, **input_filters}, length=length, offset=offset)
-        if _input.user is None:
+        if user is None:
             return species
 
-        user_favorites = self.favorite_repository.find_by_user_id(_input.user)
+        user_favorites = self.favorite_repository.find_by_user_id(user)
         if user_favorites is None:
             return species
 
