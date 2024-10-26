@@ -3,6 +3,7 @@ import os
 from dependency_injector import providers
 from dependency_injector.containers import DeclarativeContainer
 
+from infra.repository.favorite_firebase_repository import FavoriteFirebaseRepository
 from infra.repository.favorite_memory_repository import FavoriteMemoryRepository
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from infra.repository.species_sql_repository import SpeciesSQLRepository
@@ -26,7 +27,7 @@ class RepositoryContainer(DeclarativeContainer):
     )
 
     favorite = providers.Singleton(
-        FavoriteMemoryRepository
+        FavoriteFirebaseRepository
         if os.getenv("TEST") != "1"
         else FavoriteMemoryRepository,
     )
