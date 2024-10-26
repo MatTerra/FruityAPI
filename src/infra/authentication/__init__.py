@@ -25,3 +25,19 @@ async def get_user(response: Response,
             detail=f"Invalid authentication credentials. {err}",
             headers={"WWW-Authenticate": 'Bearer error="invalid_token"'}
         )
+
+async def optional_get_user(response: Response,
+                   cred: HTTPAuthorizationCredentials
+                   = Depends(HTTPBearer(auto_error=False))):
+    if cred is None:
+        return None
+    try:
+        decoded_token = auth.verify_id_token(cred.credentials)
+        response.headers['WWW-Authenticate'] = 'Bearer realm="auth_required"'
+        return decoded_token
+    except Exception as err:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Invalid authentication credentials. {err}",
+            headers={"WWW-Authenticate": 'Bearer error="invalid_token"'}
+        )

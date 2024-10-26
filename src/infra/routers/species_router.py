@@ -11,7 +11,7 @@ from core.usecase.species.propose_species import ProposeSpecies, \
     ProposeSpeciesInput, ProposeSpeciesRequestInput
 from core.usecase.species.unfavorite_species import UnfavoriteSpeciesInput, UnfavoriteSpecies, \
     UnfavoriteSpeciesRequestInput
-from infra.authentication import get_user
+from infra.authentication import get_user, optional_get_user
 from infra.exceptions import treat_exceptions
 
 species_v1_router = APIRouter(
@@ -25,8 +25,9 @@ species_v1_router = APIRouter(
 def find_species(popular_name: str | None = None,
                  scientific_name: str | None = None,
                  length: int = 10,
-                 offset: int = 0):
-    filters = FindSpeciesInput(length=length, offset=offset)
+                 offset: int = 0,
+                 user=Depends(optional_get_user)):
+    filters = FindSpeciesInput(length=length, offset=offset, user=user)
     filters.scientific_name = scientific_name
     filters.popular_name = popular_name
     find_species_handler = FindSpecies()
