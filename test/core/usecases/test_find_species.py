@@ -1,10 +1,13 @@
 import datetime
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 from pytest import fixture
 
+from core.entity.favorites import Favorites
 from core.entity.species import Species
 from core.usecase.species.find_species import FindSpecies, FindSpeciesInput
+from infra.repository import FavoriteMemoryRepository
 from infra.repository.species_memory_repository import SpeciesMemoryRepository
 from test import container
 
@@ -45,7 +48,7 @@ class TestFindSpecies:
         repository.create(cagaita)
         repository.create(cajuzinho)
         repository.create(not_approved)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput())
             assert results == (3, [cagaita, cajuzinho])
@@ -60,7 +63,7 @@ class TestFindSpecies:
         repository.create(cagaita)
         repository.create(cajuzinho)
         repository.create(not_approved)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput(
                 scientific_name="eugenia dysenterica"
@@ -77,7 +80,7 @@ class TestFindSpecies:
         repository.create(cagaita)
         repository.create(cajuzinho)
         repository.create(not_approved)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput(
                 scientific_name="eugenia bela"
@@ -94,7 +97,7 @@ class TestFindSpecies:
         repository.create(cagaita)
         repository.create(cajuzinho)
         repository.create(not_approved)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput(
                 popular_name="cagaita"
@@ -116,7 +119,7 @@ class TestFindSpecies:
         datetime_mock.now.return_value = datetime.datetime(
             2022, 9, 10, 0, 0, 0)
         monkeypatch.setattr(datetime, "datetime", datetime_mock)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput(
                 in_season=True
@@ -138,9 +141,45 @@ class TestFindSpecies:
         datetime_mock.now.return_value = datetime.datetime(
             2022, 9, 10, 0, 0, 0)
         monkeypatch.setattr(datetime, "datetime", datetime_mock)
-        with container.species.override(repository):
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
             find_species = FindSpecies()
             results = await find_species.execute(FindSpeciesInput(
                 in_season=False
             ))
             assert results == (3, [cajuzinho])
+
+    async def test_find_species_with_user_should_work_with_no_favorites(
+            self,
+            cagaita,
+            cajuzinho,
+            not_approved,
+            monkeypatch
+    ):
+        repository = SpeciesMemoryRepository()
+        repository.create(cagaita)
+        repository.create(cajuzinho)
+        repository.create(not_approved)
+        with container.species.override(repository) and container.favorite.override(FavoriteMemoryRepository()):
+            find_species = FindSpecies()
+            results = await find_species.execute(FindSpeciesInput(user="tester"))
+            assert results == (3, [cagaita, cajuzinho])
+
+    async def test_find_species_with_user_should_fill_favorites(
+            self,
+            cagaita,
+            cajuzinho,
+            not_approved,
+            monkeypatch
+    ):
+        repository = SpeciesMemoryRepository()
+        repository.create(cagaita)
+        repository.create(cajuzinho)
+        repository.create(not_approved)
+        favorite_repository = FavoriteMemoryRepository()
+        favorite_repository.create(Favorites(user="tester", species={cagaita.id_}))
+        with container.species.override(repository) and container.favorite.override(favorite_repository):
+            find_species = FindSpecies()
+            results = await find_species.execute(FindSpeciesInput(user="tester"))
+            cagaita_favorite = deepcopy(cagaita)
+            cagaita_favorite.favorite = True
+            assert results == (3, [cagaita_favorite, cajuzinho])

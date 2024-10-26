@@ -24,6 +24,8 @@ class Species(Entity):
                                     metadata={"validation": is_valid_month})
     season_end_month: int = field(default=None,
                                   metadata={"validation": is_valid_month})
+    favorite: bool = field(default=False,
+                           metadata={"database": False})
 
     def __post_init__(self):
         if isinstance(self.popular_names, str):
