@@ -7,7 +7,7 @@ from core.usecase import UseCaseInput, UseCase
 from infra.repository import RepositoryContainer
 
 class FavoriteSpeciesRequestInput(BaseModel):
-    species: str
+    species: str = ...
 
 
 class FavoriteSpeciesInput(UseCaseInput):

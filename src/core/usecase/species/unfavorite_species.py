@@ -8,7 +8,7 @@ from infra.repository import RepositoryContainer
 
 
 class UnfavoriteSpeciesRequestInput(BaseModel):
-    species: str
+    species: str = ...
 
 
 class UnfavoriteSpeciesInput(UseCaseInput):
