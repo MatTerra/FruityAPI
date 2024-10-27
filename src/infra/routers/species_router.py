@@ -84,7 +84,7 @@ def favorite_species(values: FavoriteSpeciesRequestInput,
 def unfavorite_species(values: UnfavoriteSpeciesRequestInput,
                     user=Depends(get_user)):
     unfavorite_species_handler = UnfavoriteSpecies()
-    _input = UnfavoriteSpeciesInput(**values.__dict__, creator=user.get("sub"))
+    _input = UnfavoriteSpeciesInput(**values.__dict__, user=user.get("sub"))
     return unfavorite_species_handler.execute(_input)
 
 
