@@ -7,3 +7,5 @@ pydantic==1.10.2
 dependency_injector==4.40.0
 pytest-mock==3.10.0
 uvicorn[standard]
+protobuf>=4.25.8 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
